@@ -8,24 +8,35 @@
 </head>
 <body>
     <div class="d-flex flex-column align-items-center">
-        <?php
-            // Handle the button presses
-            $status = 'Not Connected';
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (isset($_POST['status'])) {
-                    $status = htmlspecialchars($_POST['status']); // Sanitize the input
-                    $encodedStatus = urlencode($status); // Encode the status value
-                    $url = "http://192.168.2.105/control?status=$encodedStatus";
-                    $response = @file_get_contents($url); // Suppress errors with @
-                    
-                    if ($response === FALSE) {
-                        $status = 'Failed to connect to Arduino';
-                    } else {
-                        $status = 'Command sent: ' . $status;
-                    }
-                }
+    <?php
+    // Handle the button presses
+    $status = 'Not Connected';
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['status'])) {
+            $status = htmlspecialchars($_POST['status']); // Sanitize the input
+            $encodedStatus = urlencode($status); // Encode the status value
+            $url = "http://192.168.2.105/control?status=$encodedStatus";
+
+            // Initialize cURL session
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout after 10 seconds
+
+            $response = curl_exec($ch);
+
+            // Check for errors
+            if ($response === FALSE) {
+                $status = 'Failed to connect to Arduino: ' . curl_error($ch);
+            } else {
+                $status = 'Command sent: ' . $status;
             }
-        ?>
+
+            curl_close($ch);
+        }
+    }
+?>
+
         <div class="status mb-3 p-2 border border-primary rounded">
             <span id="connection-status"><?php echo $status; ?></span>
         </div>
