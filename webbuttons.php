@@ -15,7 +15,7 @@
         if (isset($_POST['status'])) {
             $status = htmlspecialchars($_POST['status']); // Sanitize the input
             $encodedStatus = urlencode($status); // Encode the status value
-            $url = "http://192.168.2.105/control?status=$encodedStatus";
+            $url = "http://192.168.2.10555555555/control?status=$encodedStatus";
 
             // Initialize cURL session
             $ch = curl_init();
@@ -51,7 +51,7 @@
 </body>
 </html>
 
-<style>
+<!-- <style>
   body {
     display: flex;
     height: 100vh;
@@ -68,4 +68,4 @@
     width: 200px;
     text-align: center;
   }
-</style>
+</style> -->
